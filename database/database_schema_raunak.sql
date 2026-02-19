@@ -1,5 +1,14 @@
 CREATE DATABASE IF NOT EXISTS food_to_ngo;
 USE food_to_ngo;
+CREATE TABLE IF NOT EXISTS users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('restaurant','ngo') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS food_items (
     food_id INT AUTO_INCREMENT PRIMARY KEY,
     restaurant_id INT,
