@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Restaurant Registration</title>
+
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/restaurant.css">
+</head>
+
+<body>
+
+<div class="floating-icons">
+  <span style="left:10%">🍕</span>
+  <span style="left:25%">🍔</span>
+  <span style="left:45%">🍜</span>
+  <span style="left:65%">🥗</span>
+  <span style="left:85%">🍽️</span>
+</div>
+
+<div class="topbar">
+  <h2>Restaurant Registration</h2>
+</div>
+
+<div class="card">
+
+  <h3>Create Restaurant Account</h3>
+
+  <input id="restName"
+    placeholder="Restaurant Name">
+
+  <input id="username"
+    placeholder="Username">
+
+  <input id="password"
+    type="password"
+    placeholder="Password">
+
+  <input id="latitude"
+    type="number"
+    step="any"
+    placeholder="Latitude (optional)">
+
+  <input id="longitude"
+    type="number"
+    step="any"
+    placeholder="Longitude (optional)">
+
+  <button onclick="registerRestaurantUI()">
+    Register Restaurant
+  </button>
+
+  <br><br>
+
+  <a href="restaurant-login.html">
+    Already have an account? Login
+  </a>
+
+</div>
+
+<script src="js/auth.js"></script>
+<script>
+
+function registerRestaurantUI() {
+
+  const name =
+    document.getElementById("restName").value.trim();
+
+  const username =
+    document.getElementById("username").value.trim();
+
+  const password =
+    document.getElementById("password").value.trim();
+
+  if (!name || !username || !password) {
+    alert("Fill all fields!");
+    return;
+  }
+
+  const success =
+    registerRestaurant(name, username, password);
+
+  if (success) {
+    alert("Restaurant registered!");
+    window.location.href =
+      "restaurant-login.html";
+  }
+
+}
+
+</script>
+
+
+</body>
+</html>
+
+

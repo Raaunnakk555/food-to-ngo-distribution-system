@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>NGO Registration</title>
+  <link rel="stylesheet" href="css/global.css">
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>NGO Registration</h2>
+
+<input id="ngoName" placeholder="NGO Name (Auto-filled)" disabled><br><br>
+
+<input id="darpan"
+  placeholder="NGO Darpan Registration"><br><br>
+
+<input id="adults"
+  type="number"
+  placeholder="Adults"><br><br>
+
+<input id="children"
+  type="number"
+  placeholder="Children"><br><br>
+
+<input id="elderly"
+  type="number"
+  placeholder="Elderly"><br><br>
+
+<button onclick="registerNGO()">
+Register
+</button>
+
+</div>
+
+<script src="js/auth.js"></script>
+
+<script>
+
+function registerNGO() {
+
+  const darpan =
+    document.getElementById("darpan").value.trim();
+
+ 
+  const record =
+    NGO_REGISTRY.find(n => n.darpan === darpan);
+
+  if (!record) {
+    alert("Invalid NGO Darpan ID!");
+    return;
+  }
+document.getElementById("ngoName").value = record.ngoName;
+ const adults =
+  parseInt(document.getElementById("adults").value) || 0;
+
+const children =
+  parseInt(document.getElementById("children").value) || 0;
+
+const elderly =
+  parseInt(document.getElementById("elderly").value) || 0;
+
+if (adults + children + elderly === 0) {
+  alert("Enter valid beneficiary counts!");
+  return;
+}
+
+const smu =
+  calculateSMU(adults, children, elderly);
+
+  const ngo = {
+    role: "ngo",
+    ngoName: record.ngoName,
+    darpan: record.darpan,
+    username: record.darpan,
+    password: "123",
+    verified: true,
+    smuCapacity: smu,
+    adults,
+  children,
+  elderly,
+    latitude: 17.3850,
+    longitude: 78.4867
+  };
+
+  const users = getUsers();
+
+  if (users.some(u => u.username === ngo.username)) {
+    alert("NGO already registered!");
+    return;
+  }
+
+  users.push(ngo);
+  saveUsers(users);
+
+  alert(`Verified! SMU Capacity: ${smu}`);
+
+  window.location.href = "ngo-login.html";
+}
+
+
+</script>
+
+
+</body>
+</html>

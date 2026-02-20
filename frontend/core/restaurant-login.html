@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Restaurant Login</title>
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+
+<body>
+
+<div class="auth-box large">
+
+  <h2>Restaurant Login</h2>
+
+  <form id="loginForm">
+
+    <input id="username" placeholder="Username" required>
+    <input id="password" type="password" placeholder="Password" required>
+
+    <button>Login</button>
+
+  </form>
+
+  <p>
+    New restaurant?
+    <a href="restaurant-register.html">Register here</a>
+  </p>
+  <p style="text-align:center; margin-top:10px;">
+  <a href="index.html">
+    ← Back to Home
+  </a>
+</p>
+
+
+</div>
+
+<script src="js/auth.js"></script>
+
+<script>
+  window.history.replaceState(null, null, window.location.href);
+document.getElementById("loginForm").addEventListener("submit", e => {
+  e.preventDefault();
+
+  const user = login(username.value, password.value);
+
+  if (user && user.role === "restaurant") {
+    localStorage.setItem("user", JSON.stringify(user));
+    window.location.replace("restaurant-dashboard.html");
+  } else {
+    alert("Invalid login!");
+  }
+});
+</script>
+
+</body>
+</html>
