@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Manage Menu</title>
+
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/restaurant.css">
+</head>
+
+<body>
+
+<div class="floating-icons">
+  <span style="left:10%">🍕</span>
+  <span style="left:25%">🍔</span>
+  <span style="left:45%">🍜</span>
+  <span style="left:65%">🥗</span>
+  <span style="left:85%">🍽️</span>
+</div>
+
+<div class="topbar">
+  <h2>Permanent Menu Management</h2>
+
+  <a href="restaurant-dashboard.html">
+    <button>← Back to Dashboard</button>
+  </a>
+</div>
+
+<div class="card">
+  <h3 id="restName"></h3>
+</div>
+<div class="card">
+
+  <h3>Add / Update Menu Item</h3>
+
+  <form id="menuForm">
+
+    <input id="itemName"
+      placeholder="Item Name"
+      required>
+
+    <input id="itemCategory"
+      placeholder="Category (Pizza, Rice, etc)"
+      required>
+
+    <select id="itemVeg" required>
+      <option value="">Select Type</option>
+      <option value="Veg">Veg</option>
+      <option value="Non-Veg">Non-Veg</option>
+      <option value="Egg">Egg</option>
+    </select>
+
+    <select id="itemFoodType" required>
+      <option value="">Food Type</option>
+      <option value="Dry">Dry</option>
+      <option value="Wet">Wet</option>
+    </select>
+
+    <input id="itemCalories"
+      type="number"
+      placeholder="Calories"
+      required>
+
+    <input id="itemShelfLife"
+      type="number"
+      placeholder="Shelf Life (hours)"
+      required>
+
+    <button type="submit">
+      Add / Update Item
+    </button>
+
+  </form>
+
+</div>
+
+<div class="card">
+
+  <h3>Your Menu</h3>
+
+  <div id="menuList"></div>
+
+</div>
+
+<script src="js/auth.js"></script>
+
+<script>
+
+const user = JSON.parse(localStorage.getItem("user"));
+
+if (!user || user.role !== "restaurant") {
+  alert("Login required!");
+  window.location.href = "restaurant-login.html";
+}
+
+document.getElementById("restName").innerText =
+  `Menu for ${user.restaurantName}`;
+
+let editIndex = -1;
+function calculateSMU(calories) {
+  return parseFloat((calories / 600).toFixed(2));
+}
+
+function refreshMenu() {
+
+  const menuList =
+    document.getElementById("menuList");
+
+  menuList.innerHTML = "";
+
+  if (!user.menu || user.menu.length === 0) {
+    menuList.innerHTML =
+      "<p>No items added yet.</p>";
+    return;
+  }
+
+  user.menu.forEach((item, index) => {
+
+    const card =
+      document.createElement("div");
+
+    card.className = "card";
+
+    card.innerHTML = `
+      <strong>${item.name}</strong>
+      (${item.category}, ${item.veg}, ${item.foodType})
+      <br>
+      Calories: ${item.calories}
+      | Shelf Life: ${item.shelfLife} hrs
+      | SMU: ${item.smu}
+      <br><br>
+      <button onclick="editItem(${index})">
+        Edit
+      </button>
+      <button onclick="deleteItem(${index})">
+        Delete
+      </button>
+    `;
+
+    menuList.appendChild(card);
+  });
+}
+
+
+document
+.getElementById("menuForm")
+.addEventListener("submit", function(e) {
+
+  e.preventDefault();
+
+  const name =
+    itemName.value.trim();
+
+  const category =
+    itemCategory.value.trim();
+
+  const veg =
+    itemVeg.value;
+
+  const foodType =
+    itemFoodType.value;
+
+  const calories =
+    parseInt(itemCalories.value);
+
+  const shelfLife =
+    parseInt(itemShelfLife.value);
+
+  if (!name || !category ||
+      !veg || !foodType ||
+      !calories || !shelfLife) {
+
+    alert("Please fill all fields properly.");
+    return;
+  }
+
+  const smu =
+    calculateSMU(calories);
+
+  const item = {
+    name,
+    category,
+    veg,
+    foodType,
+    calories,
+    shelfLife,
+    smu,
+    quantity: 0
+  };
+
+  if (!user.menu)
+    user.menu = [];
+
+  if (editIndex === -1) {
+    user.menu.push(item);
+  } else {
+    user.menu[editIndex] = item;
+    editIndex = -1;
+  }
+
+  saveRestaurantMenu(
+    user.username,
+    user.menu
+  );
+
+  localStorage.setItem(
+    "user",
+    JSON.stringify(user)
+  );
+
+  this.reset();
+  refreshMenu();
+});
+
+function deleteItem(index) {
+
+  if (!confirm("Delete this item?"))
+    return;
+
+  user.menu.splice(index, 1);
+
+  saveRestaurantMenu(
+    user.username,
+    user.menu
+  );
+
+  localStorage.setItem(
+    "user",
+    JSON.stringify(user)
+  );
+
+  refreshMenu();
+}
+
+function editItem(index) {
+
+  const item =
+    user.menu[index];
+
+  itemName.value =
+    item.name;
+
+  itemCategory.value =
+    item.category;
+
+  itemVeg.value =
+    item.veg;
+
+  itemFoodType.value =
+    item.foodType;
+
+  itemCalories.value =
+    item.calories;
+
+  itemShelfLife.value =
+    item.shelfLife;
+
+  editIndex = index;
+}
+refreshMenu();
+
+</script>
+
+</body>
+</html>
+
