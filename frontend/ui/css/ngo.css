@@ -1,0 +1,43 @@
+#foodList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.ngo-food-card {
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(14px);
+
+  padding: 16px;
+  border-radius: 20px;
+
+  box-shadow: 0 10px 26px rgba(106,17,203,0.25);
+  transition: 0.3s;
+}
+
+.ngo-food-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 36px rgba(106,17,203,0.4);
+}
+
+#cartItems {
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.progress-bar {
+  width: 100%;
+  background: rgba(255,255,255,0.5);
+  border-radius: 12px;
+}
+
+#progressFill {
+  height: 12px;
+  border-radius: 12px;
+  background: linear-gradient(
+    90deg,
+    #6a11cb,
+    #ff6f3c
+  );
+  width: 0%;
+}

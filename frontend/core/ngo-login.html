@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>NGO Login</title>
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+
+<body>
+
+<div class="auth-box">
+
+  <h2>NGO Login</h2>
+
+  <form id="ngoForm">
+
+    <input id="username" placeholder="Username" required>
+
+    <input id="password" type="password" placeholder="Password" required>
+
+    <button type="submit">Login</button>
+
+  </form>
+  <div style="margin-top:15px; text-align:center;">
+  <p>New NGO?</p>
+  <a href="ngo-register.html">
+    <button type="button">Register Now</button>
+  </a>
+</div>
+<p style="text-align:center; margin-top:10px;">
+  <a href="index.html">
+    ← Back to Home
+  </a>
+</p>
+
+
+</div>
+
+<script src="js/auth.js"></script>
+
+<script>
+document.getElementById("ngoForm").addEventListener("submit", e => {
+  e.preventDefault();
+
+  const user = login(username.value, password.value);
+
+if (user && user.role === "ngo") {
+
+  if (!user.latitude || !user.longitude) {
+    user.latitude = 17.3850;
+    user.longitude = 78.4867;
+  }
+
+  localStorage.setItem("user", JSON.stringify(user));
+  window.location.href = "ngo-dashboard.html";
+
+} else {
+  alert("Invalid NGO login");
+}
+
+});
+</script>
+
+</body>
+</html>
