@@ -23,3 +23,5 @@ def get_cursor():
     if conn:
         return conn, conn.cursor(dictionary=True)
     return None, None
+
+print("DB NAME:", os.getenv("DB_NAME"))
