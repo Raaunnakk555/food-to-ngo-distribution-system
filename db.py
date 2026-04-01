@@ -6,6 +6,7 @@ load_dotenv()
 
 def get_connection():
     try:
+        print("DB NAME:", os.getenv("DB_NAME"))
         conn = mysql.connector.connect(
             host=os.getenv("DB_HOST"),
             user=os.getenv("DB_USER"),
@@ -24,4 +25,4 @@ def get_cursor():
         return conn, conn.cursor(dictionary=True)
     return None, None
 
-print("DB NAME:", os.getenv("DB_NAME"))
+
