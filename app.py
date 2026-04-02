@@ -1,15 +1,22 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS   # ✅ ADDED
 from db import get_connection
 from datetime import datetime, timedelta
 import random
+import os
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='frontend', static_url_path='')
 CORS(app, resources={r"/*": {"origins": "*"}})   # ✅ ADDED
 
 @app.route("/")
 def home():
-    return "Backend is running 🚀"
+    return app.send_static_file('login.html')
+
+@app.route("/<path:path>")
+def serve_static(path):
+    if os.path.exists(os.path.join(app.static_folder, path)):
+        return app.send_static_file(path)
+    return app.send_static_file('login.html')
 
 # ------------------ SIGNUP ------------------
 @app.route("/signup", methods=["POST"])
