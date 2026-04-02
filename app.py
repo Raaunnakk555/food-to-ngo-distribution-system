@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS   # ✅ ADDED
 from db import get_connection
 from datetime import datetime, timedelta
 import random
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})   # ✅ ADDED
 
 @app.route("/")
 def home():
@@ -166,7 +168,7 @@ def get_food():
         return jsonify({"error": str(e)})
 
 
-# ------------------ PLACE ORDER (SMU LOGIC) ------------------
+# ------------------ PLACE ORDER ------------------
 @app.route("/place-order", methods=["POST"])
 def place_order():
     try:
@@ -179,31 +181,26 @@ def place_order():
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
 
-        # Check NGO capacity
         cursor.execute("SELECT remaining_capacity_smu FROM ngos WHERE ngo_id=%s", (ngo_id,))
         ngo = cursor.fetchone()
 
         if not ngo or ngo["remaining_capacity_smu"] < requested_smu:
             return jsonify({"error": "SMU limit exceeded"})
 
-        # Generate OTP
         otp = str(random.randint(1000, 9999))
         otp_expiry = datetime.now() + timedelta(minutes=10)
 
-        # Insert order
         cursor.execute("""
             INSERT INTO orders (ngo_id, food_id, quantity_smu, otp, otp_expiry)
             VALUES (%s, %s, %s, %s, %s)
         """, (ngo_id, food_id, requested_smu, otp, otp_expiry))
 
-        # Update NGO capacity
         cursor.execute("""
             UPDATE ngos 
             SET remaining_capacity_smu = remaining_capacity_smu - %s 
             WHERE ngo_id=%s
         """, (requested_smu, ngo_id))
 
-        # Update food quantity
         cursor.execute("""
             UPDATE food_items 
             SET quantity_available_smu = quantity_available_smu - %s 
@@ -248,7 +245,6 @@ def verify_otp():
         if datetime.now() > order["otp_expiry"]:
             return jsonify({"error": "OTP expired"})
 
-        # Mark collected
         cursor.execute(
             "UPDATE orders SET order_status='collected' WHERE order_id=%s",
             (order_id,)
@@ -267,3 +263,4 @@ def verify_otp():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
