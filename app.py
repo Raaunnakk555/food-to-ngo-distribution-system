@@ -69,23 +69,40 @@ def login():
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
 
+        # Get user
         cursor.execute(
             "SELECT * FROM users WHERE email=%s AND password=%s",
             (email, password)
         )
-
         user = cursor.fetchone()
+
+        if not user:
+            return jsonify({"error": "Invalid credentials"})
+
+        # 🔥 ADD THIS PART ONLY
+        if user["role"] == "restaurant":
+            cursor.execute(
+                "SELECT restaurant_id FROM restaurants WHERE user_id=%s",
+                (user["user_id"],)
+            )
+            res = cursor.fetchone()
+            user["restaurant_id"] = res["restaurant_id"]
+
+        elif user["role"] == "ngo":
+            cursor.execute(
+                "SELECT ngo_id FROM ngos WHERE user_id=%s",
+                (user["user_id"],)
+            )
+            res = cursor.fetchone()
+            user["ngo_id"] = res["ngo_id"]
 
         cursor.close()
         conn.close()
 
-        if user:
-            return jsonify({
-                "message": "Login successful",
-                "user": user
-            })
-        else:
-            return jsonify({"error": "Invalid credentials"})
+        return jsonify({
+            "message": "Login successful",
+            "user": user
+        })
 
     except Exception as e:
         return jsonify({"error": str(e)})
