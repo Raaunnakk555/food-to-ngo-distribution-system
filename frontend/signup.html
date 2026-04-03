@@ -261,10 +261,7 @@
             color: #3b82f6;
         }
 
-        /* ============================================
-           UPLOAD STYLING
-           ============================================ */
-
+        /* File upload styling */
         .file-input-wrapper {
             position: relative;
             overflow: hidden;
@@ -355,14 +352,14 @@
             </div>
 
             <div class="form-group">
-                <select id="role" onchange="toggleCapacity()">
+                <select id="role" onchange="toggleFields()">
                     <option value="restaurant">Restaurant</option>
                     <option value="ngo">NGO</option>
                 </select>
             </div>
 
             <!-- Certificate Upload for Restaurants -->
-            <div class="form-group" id="cert-group">
+            <div class="form-group" id="cert-group" style="display: block;">
                 <label>Upload Certificate (PDF, JPG, PNG)</label>
                 <div class="file-input-wrapper">
                     <label for="certificate" class="file-input-label" id="fileLabel">
@@ -375,7 +372,8 @@
 
             <!-- NGO Capacity -->
             <div class="form-group" id="capacity-group" style="display: none;">
-                <input id="capacity" type="number" placeholder="NGO Capacity (SMU)">
+                <label>NGO Capacity (SMU)</label>
+                <input id="capacity" type="number" placeholder="Enter NGO capacity in SMU" min="1">
             </div>
 
             <button onclick="signup()">Signup</button>
@@ -460,62 +458,33 @@
     <script src="script.js"></script>
     <script>
         // ============================================
-        // TOGGLE CAPACITY / CERTIFICATE
+        // TOGGLE FIELDS BASED ON ROLE
         // ============================================
 
-        function toggleCapacity() {
+        function toggleFields() {
             const role = document.getElementById('role').value;
+            const certGroup = document.getElementById('cert-group');
+            const capacityGroup = document.getElementById('capacity-group');
 
-            document.getElementById('capacity-group').style.display = role === 'ngo' ? 'block' : 'none';
-            document.getElementById('cert-group').style.display = role === 'restaurant' ? 'block' : 'none';
+            console.log('Role selected:', role);
+
+            if (role === 'restaurant') {
+                // Show certificate, hide capacity
+                certGroup.style.display = 'block';
+                capacityGroup.style.display = 'none';
+                console.log('Showing certificate field');
+            } else if (role === 'ngo') {
+                // Hide certificate, show capacity
+                certGroup.style.display = 'none';
+                capacityGroup.style.display = 'block';
+                console.log('Showing capacity field');
+            }
         }
 
         // Run on page load
-        document.addEventListener("DOMContentLoaded", toggleCapacity);
-
-        // ============================================
-        // FILE UPLOAD HANDLING
-        // ============================================
-
-        const fileInput = document.getElementById('certificate');
-        const fileLabel = document.getElementById('fileLabel');
-        const fileName = document.getElementById('fileName');
-
-        // Click to upload
-        fileLabel.addEventListener('click', function() {
-            fileInput.click();
-        });
-
-        // File selected
-        fileInput.addEventListener('change', function(e) {
-            if (this.files && this.files[0]) {
-                const file = this.files[0];
-                fileName.textContent = '✓ ' + file.name + ' (' + (file.size / 1024).toFixed(2) + ' KB)';
-                fileLabel.classList.add('active');
-            }
-        });
-
-        // Drag and drop
-        fileLabel.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            fileLabel.classList.add('active');
-        });
-
-        fileLabel.addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            fileLabel.classList.remove('active');
-        });
-
-        fileLabel.addEventListener('drop', function(e) {
-            e.preventDefault();
-            fileLabel.classList.remove('active');
-            
-            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                fileInput.files = e.dataTransfer.files;
-                const file = e.dataTransfer.files[0];
-                fileName.textContent = '✓ ' + file.name + ' (' + (file.size / 1024).toFixed(2) + ' KB)';
-                fileLabel.classList.add('active');
-            }
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded, running toggleFields');
+            toggleFields();
         });
 
         // ============================================
@@ -600,6 +569,55 @@
             return tickets;
         }
 
+        // ============================================
+        // FILE UPLOAD HANDLING
+        // ============================================
+
+        const fileInput = document.getElementById('certificate');
+        const fileLabel = document.getElementById('fileLabel');
+        const fileName = document.getElementById('fileName');
+
+        // Click to upload
+        fileLabel.addEventListener('click', function() {
+            fileInput.click();
+        });
+
+        // File selected
+        fileInput.addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                fileName.textContent = '✓ ' + file.name + ' (' + (file.size / 1024).toFixed(2) + ' KB)';
+                fileLabel.classList.add('active');
+            }
+        });
+
+        // Drag and drop
+        fileLabel.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            fileLabel.classList.add('active');
+        });
+
+        fileLabel.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            fileLabel.classList.remove('active');
+        });
+
+        fileLabel.addEventListener('drop', function(e) {
+            e.preventDefault();
+            fileLabel.classList.remove('active');
+            
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                fileInput.files = e.dataTransfer.files;
+                const file = e.dataTransfer.files[0];
+                fileName.textContent = '✓ ' + file.name + ' (' + (file.size / 1024).toFixed(2) + ' KB)';
+                fileLabel.classList.add('active');
+            }
+        });
+
+        console.log('Signup page loaded successfully!');
+    </script>
+</body>
+</html>
         console.log('Support ticket system loaded successfully!');
     </script>
 </body>
