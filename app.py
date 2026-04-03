@@ -1,12 +1,12 @@
 from flask import Flask, request, jsonify, send_from_directory
-from flask_cors import CORS   # ✅ ADDED
+from flask_cors import CORS
 from db import get_connection
 from datetime import datetime, timedelta
 import random
 import os
 
 app = Flask(__name__, static_folder='frontend', static_url_path='')
-CORS(app, resources={r"/*": {"origins": "*"}})   # ✅ ADDED
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 @app.route("/")
 def home():
@@ -18,16 +18,16 @@ def serve_static(path):
         return app.send_static_file(path)
     return app.send_static_file('login.html')
 
-# ------------------ SIGNUP ------------------
+
+# ------------------ SIGNUP (UPDATED) ------------------
 @app.route("/signup", methods=["POST"])
 def signup():
     try:
-        data = request.get_json()
-
-        name = data.get("name")
-        email = data.get("email")
-        password = data.get("password")
-        role = data.get("role")
+        # 🔥 CHANGED: use form instead of JSON
+        name = request.form.get("name")
+        email = request.form.get("email")
+        password = request.form.get("password")
+        role = request.form.get("role")
 
         conn = get_connection()
         cursor = conn.cursor()
@@ -40,15 +40,25 @@ def signup():
 
         user_id = cursor.lastrowid
 
-        # Role-specific table
+        # ---------------- RESTAURANT ----------------
         if role == "restaurant":
-            cursor.execute(
-                "INSERT INTO restaurants (user_id, restaurant_name) VALUES (%s, %s)",
-                (user_id, name)
-            )
+            file = request.files.get("certificate")
 
+            filepath = None
+            if file:
+                os.makedirs("uploads", exist_ok=True)
+                filepath = os.path.join("uploads", file.filename)
+                file.save(filepath)
+
+            cursor.execute("""
+                INSERT INTO restaurants 
+                (user_id, restaurant_name, certificate, is_verified)
+                VALUES (%s, %s, %s, %s)
+            """, (user_id, name, filepath, False))
+
+        # ---------------- NGO ----------------
         elif role == "ngo":
-            total_capacity = data.get("total_capacity_smu")
+            total_capacity = request.form.get("total_capacity_smu")
 
             cursor.execute("""
                 INSERT INTO ngos 
@@ -66,7 +76,7 @@ def signup():
         return jsonify({"error": str(e)})
 
 
-# ------------------ LOGIN ------------------
+# ------------------ LOGIN (UPDATED) ------------------
 @app.route("/login", methods=["POST"])
 def login():
     try:
@@ -78,7 +88,6 @@ def login():
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
 
-        # Get user
         cursor.execute(
             "SELECT * FROM users WHERE email=%s AND password=%s",
             (email, password)
@@ -88,13 +97,17 @@ def login():
         if not user:
             return jsonify({"error": "Invalid credentials"})
 
-        # 🔥 ADD THIS PART ONLY
+        # 🔥 UPDATED: verification check
         if user["role"] == "restaurant":
             cursor.execute(
-                "SELECT restaurant_id FROM restaurants WHERE user_id=%s",
+                "SELECT restaurant_id, is_verified FROM restaurants WHERE user_id=%s",
                 (user["user_id"],)
             )
             res = cursor.fetchone()
+
+            if not res["is_verified"]:
+                return jsonify({"error": "Wait for admin verification"}), 403
+
             user["restaurant_id"] = res["restaurant_id"]
 
         elif user["role"] == "ngo":
@@ -270,4 +283,7 @@ def verify_otp():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+
 
