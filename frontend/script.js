@@ -9,31 +9,34 @@ function getNgoId(user) {
     return user.ngo_id;
 }
 
-// ---------------- SIGNUP ----------------
+// ---------------- SIGNUP (UPDATED FOR FILE UPLOAD) ----------------
 async function signup() {
     const role = document.getElementById("role").value;
 
-    let data = {
-        name: document.getElementById("name").value,
-        email: document.getElementById("email").value,
-        password: document.getElementById("password").value,
-        role: role
-    };
+    const formData = new FormData();
+    formData.append("name", document.getElementById("name").value);
+    formData.append("email", document.getElementById("email").value);
+    formData.append("password", document.getElementById("password").value);
+    formData.append("role", role);
 
     if (role === "ngo") {
-        data.total_capacity_smu = parseInt(document.getElementById("capacity").value);
+        formData.append("total_capacity_smu", document.getElementById("capacity").value);
+    }
+
+    if (role === "restaurant") {
+        const file = document.getElementById("certificate").files[0];
+        formData.append("certificate", file);
     }
 
     const res = await fetch(BASE_URL + "/signup", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
+        body: formData
     });
 
     const result = await res.json();
 
     if (res.ok) {
-        alert("Signup successful!");
+        alert("Signup successful! Wait for admin approval.");
         window.location.href = "login.html";
     } else {
         alert(result.error);
