@@ -8,6 +8,7 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+
 -- ================= RESTAURANTS =================
 CREATE TABLE restaurants (
     restaurant_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -16,9 +17,12 @@ CREATE TABLE restaurants (
     address TEXT,
     phone VARCHAR(15),
 
+    -- 🔥 NEW FIELDS (FSSAI FEATURE)
+    certificate VARCHAR(255),
+    is_verified BOOLEAN DEFAULT FALSE,
+
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
-
 -- ================= NGOS =================
 CREATE TABLE ngos (
     ngo_id INT AUTO_INCREMENT PRIMARY KEY,
