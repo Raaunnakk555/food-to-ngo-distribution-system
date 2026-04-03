@@ -1,15 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>NGO Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGO Dashboard - Food Distribution</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body onload="loadFood()">
+    <nav>
+        <h1>Food Connect</h1>
+        <button class="logout-btn" onclick="logout()" style="width: auto;">Logout</button>
+    </nav>
 
-    <h2>Available Food</h2>
-
-    <div id="food-list"></div>
+    <div class="container">
+        <h2 style="align-self: flex-start; margin-bottom: 0.5rem; color: var(--text-main);">Available Food Donations</h2>
+        <p style="align-self: flex-start; color: var(--text-muted); margin-bottom: 1rem;">Browse and request food from partnered restaurants.</p>
+        
+        <div id="food-list" style="width: 100%;">
+            <!-- Food items will be dynamically injected here by script.js -->
+        </div>
+    </div>
 
     <script src="script.js"></script>
-
+    <script>
+        // Check authentication
+        if (!sessionStorage.getItem("user") || JSON.parse(sessionStorage.getItem("user")).role !== "ngo") {
+            window.location.href = "login.html";
+        }
+    </script>
 </body>
 </html>

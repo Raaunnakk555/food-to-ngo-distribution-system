@@ -1,23 +1,64 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Restaurant Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Dashboard - Food Distribution</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <nav>
+        <h1>Food Connect</h1>
+        <button class="logout-btn" onclick="logout()" style="width: auto;">Logout</button>
+    </nav>
 
-    <h2>Add Food</h2>
+    <div class="container">
+        <div class="card dashboard-card">
+            <h2>Add New Food Listing</h2>
 
-    <input id="food_name" placeholder="Food Name"><br><br>
-    <input id="food_type" placeholder="veg / non-veg / jain"><br><br>
-    <input id="shelf" placeholder="Shelf Life (hours)"><br><br>
-    <input id="dry" placeholder="dry / wet"><br><br>
-    <input id="cal" placeholder="Calories"><br><br>
-    <input id="smu" placeholder="SMU Equivalent"><br><br>
-    <input id="qty" placeholder="Quantity (SMU)"><br><br>
+            <div class="form-grid">
+                <div class="form-group">
+                    <input id="food_name" type="text" placeholder="Food Name">
+                </div>
+                <div class="form-group">
+                    <select id="food_type">
+                        <option value="" disabled selected>Select Food Type</option>
+                        <option value="veg">Vegetarian</option>
+                        <option value="non-veg">Non-Vegetarian</option>
+                        <option value="jain">Jain</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input id="shelf" type="number" placeholder="Shelf Life (hours)">
+                </div>
+                <div class="form-group">
+                    <select id="dry">
+                        <option value="" disabled selected>Select Preservation</option>
+                        <option value="dry">Dry</option>
+                        <option value="wet">Wet</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input id="cal" type="number" placeholder="Total Calories">
+                </div>
+                <div class="form-group">
+                    <input id="smu" type="number" placeholder="SMU Equivalent per serving">
+                </div>
+                <div class="form-group">
+                    <input id="qty" type="number" placeholder="Total Quantity (SMU)">
+                </div>
+            </div>
 
-    <button onclick="addFood()">Add Food</button>
+            <button onclick="addFood()" style="margin-top: 1rem;">Publish Food</button>
+        </div>
+    </div>
 
     <script src="script.js"></script>
-
+    <script>
+        // Check authentication
+        if (!sessionStorage.getItem("user") || JSON.parse(sessionStorage.getItem("user")).role !== "restaurant") {
+            window.location.href = "login.html";
+        }
+    </script>
 </body>
 </html>

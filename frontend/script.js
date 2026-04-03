@@ -104,14 +104,22 @@ async function loadFood() {
 
     data.forEach(food => {
         container.innerHTML += `
-            <div style="border:1px solid black; padding:10px; margin:10px;">
+            <div class="food-item-card">
+                <span class="badge">${food.dry_or_wet === 'dry' ? 'Dry Food' : 'Wet Food'}</span>
                 <h3>${food.food_name}</h3>
-                <p>Type: ${food.food_type}</p>
-                <p>Available SMU: ${food.quantity_available_smu}</p>
-                <button onclick="placeOrder(${food.food_id})">Request</button>
+                <p><strong>Type:</strong> ${food.food_type.charAt(0).toUpperCase() + food.food_type.slice(1)}</p>
+                <p><strong>Available SMU:</strong> ${food.quantity_available_smu}</p>
+                <p><strong>Calories/SMU:</strong> ${food.calorific_value}</p>
+                <button class="btn-success" onclick="placeOrder(${food.food_id})" style="margin-top: 1rem;">Request Food</button>
             </div>
         `;
     });
+}
+
+// ---------------- LOGOUT ----------------
+function logout() {
+    sessionStorage.removeItem("user");
+    window.location.href = "login.html";
 }
 
 // ---------------- PLACE ORDER ----------------

@@ -1,28 +1,53 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Signup</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup - Food Distribution</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div class="container">
+        <div class="card">
+            <h2>Create Account</h2>
 
-    <h2>Signup</h2>
+            <div class="form-group">
+                <input id="name" type="text" placeholder="Full Name">
+            </div>
+            
+            <div class="form-group">
+                <input id="email" type="email" placeholder="Email Address">
+            </div>
+            
+            <div class="form-group">
+                <input id="password" type="password" placeholder="Password">
+            </div>
 
-    <input id="name" placeholder="Name"><br><br>
-    <input id="email" placeholder="Email"><br><br>
-    <input id="password" type="password" placeholder="Password"><br><br>
+            <div class="form-group">
+                <select id="role" onchange="toggleCapacity()">
+                    <option value="restaurant">Restaurant</option>
+                    <option value="ngo">NGO</option>
+                </select>
+            </div>
 
-    <select id="role">
-        <option value="restaurant">Restaurant</option>
-        <option value="ngo">NGO</option>
-    </select><br><br>
+            <div class="form-group" id="capacity-group" style="display: none;">
+                <input id="capacity" type="number" placeholder="NGO Capacity (SMU)">
+            </div>
 
-    <input id="capacity" placeholder="NGO Capacity (only for NGO)"><br><br>
+            <button onclick="signup()">Signup</button>
 
-    <button onclick="signup()">Signup</button>
+            <p class="text-center" style="margin-top: 1.5rem; color: var(--text-muted);">
+                Already have an account? <a href="login.html">Login</a>
+            </p>
+        </div>
+    </div>
 
-    <p>Already have an account? <a href="login.html">Login</a></p>
-
+    <script>
+        function toggleCapacity() {
+            const role = document.getElementById('role').value;
+            document.getElementById('capacity-group').style.display = role === 'ngo' ? 'block' : 'none';
+        }
+    </script>
     <script src="script.js"></script>
-
 </body>
 </html>
