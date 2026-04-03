@@ -30,6 +30,11 @@
                 </select>
             </div>
 
+            <!-- 🔥 NEW: Certificate Upload -->
+            <div class="form-group" id="cert-group">
+                <input id="certificate" type="file" accept=".pdf,.jpg,.png">
+            </div>
+
             <div class="form-group" id="capacity-group" style="display: none;">
                 <input id="capacity" type="number" placeholder="NGO Capacity (SMU)">
             </div>
@@ -45,9 +50,16 @@
     <script>
         function toggleCapacity() {
             const role = document.getElementById('role').value;
+
             document.getElementById('capacity-group').style.display = role === 'ngo' ? 'block' : 'none';
+            document.getElementById('cert-group').style.display = role === 'restaurant' ? 'block' : 'none';
         }
+
+        // 🔥 IMPORTANT: run on page load
+        toggleCapacity();
     </script>
+
     <script src="script.js"></script>
 </body>
 </html>
+  
